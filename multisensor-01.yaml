@@ -7,17 +7,12 @@ esphome:
   name_add_mac_suffix: false
   friendly_name: ${friendly_name}
 
-# Turn LED on once at boot
-  on_boot:
-    priority: -100
-    then:
-      - output.turn_on: status_led
-
 rp2040:
   board: rpipicow
 
 # Enable logging
 logger:
+  level: WARN
 
 # Enable Home Assistant API
 api:
@@ -55,16 +50,6 @@ time:
   - platform: homeassistant
     id: homeassistant_time
 
-# ----------------------------
-# Outputs
-# ----------------------------
-output:
-  - platform: gpio
-    pin:
-      number: 32  # Pico W onboard LED (Pico non-W uses 25)
-      mode: output
-    id: status_led
-
 # https://microcontrollerslab.com/?s=BME680
 # https://community.home-assistant.io/t/esphome-bme680-coding-problem-communication-with-bme680-failed/159225
 # https://community.bosch-sensortec.com/t5/MEMS-sensors-forum/BME680-on-ESPHome-using-Bosch-s-BSEC-library/td-p/13210/page/3
@@ -89,24 +74,25 @@ sensor:
 
     temperature:
       name: BME680 Temperature
-      unit_of_measurement: '°C'
+      unit_of_measurement: "°C"
       oversampling: 16x
       accuracy_decimals: 1
       filters:
-        - offset: '-0.5'
+        - offset: "-0.5"
       icon: mdi:thermometer
 
     pressure:
       name: BME680 Pressure
-      unit_of_measurement: 'hPa'
+      unit_of_measurement: "hPa"
       accuracy_decimals: 1
       filters:
-        - offset: '27.2'
+        # Station pressure to sea-level offset for ~700-750ft elevation
+        - offset: "27.2"
       icon: mdi:gauge
 
     humidity:
       name: BME680 Humidity
-      unit_of_measurement: '%'
+      unit_of_measurement: "%"
       accuracy_decimals: 1
       icon: mdi:water-percent
       id: hum
